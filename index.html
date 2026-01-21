@@ -3,18 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Range & Elevation Calculator</title>
+    <title>Warden AA Flak Plotter</title>
     <style>
         :root {
-            --primary: #00d1b2;
-            --bg: #1a1a1a;
-            --card: #2d2d2d;
-            --text: #eeeeee;
+            --warden-blue: #577590;
+            --warden-dark: #2b3a47;
+            --warden-steel: #8d99ae;
+            --warden-brass: #c5a059;
+            --text: #e0e0e0;
+            --bg: #12161a;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Courier New', Courier, monospace;
             background-color: var(--bg);
+            background-image: radial-gradient(circle, #1d252c 1px, transparent 1px);
+            background-size: 20px 20px;
             color: var(--text);
             display: flex;
             justify-content: center;
@@ -24,54 +28,71 @@
         }
 
         .container {
-            background: var(--card);
+            background: var(--warden-dark);
             padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 2px solid var(--warden-steel);
+            border-radius: 4px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
             width: 100%;
             max-width: 400px;
+            position: relative;
         }
 
-        h2 { text-align: center; color: var(--primary); margin-bottom: 1.5rem; }
+        .logo {
+            display: block;
+            margin: 0 auto 1rem auto;
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 5px var(--warden-blue));
+        }
+
+        h2 { 
+            text-align: center; 
+            color: var(--warden-brass); 
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 1px solid var(--warden-steel);
+            padding-bottom: 10px;
+        }
 
         .input-group { margin-bottom: 1.2rem; }
 
-        label { display: block; margin-bottom: 0.5rem; font-size: 0.9rem; color: #bbb; }
+        label { display: block; margin-bottom: 0.5rem; font-size: 0.85rem; color: var(--warden-steel); text-transform: uppercase; }
 
         input {
             width: 100%;
             padding: 12px;
-            border: 2px solid #444;
-            border-radius: 6px;
-            background: #1a1a1a;
+            border: 1px solid var(--warden-steel);
+            background: #1a2229;
             color: white;
-            font-size: 1rem;
+            font-size: 1.1rem;
             outline: none;
-            transition: border-color 0.3s;
+            box-sizing: border-box;
         }
 
-        input:focus { border-color: var(--primary); }
+        input:focus { border-color: var(--warden-brass); box-shadow: 0 0 5px var(--warden-brass); }
 
         button {
             width: 100%;
             padding: 14px;
-            background: var(--primary);
-            border: none;
-            border-radius: 6px;
-            color: #1a1a1a;
+            background: var(--warden-blue);
+            border: 1px solid var(--warden-steel);
+            color: white;
             font-weight: bold;
             font-size: 1rem;
             cursor: pointer;
-            transition: transform 0.1s, opacity 0.2s;
+            text-transform: uppercase;
+            transition: all 0.2s;
         }
 
-        button:active { transform: scale(0.98); }
-        button:hover { opacity: 0.9; }
+        button:hover { background: #4a647a; border-color: var(--warden-brass); }
 
         .results {
             margin-top: 1.5rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid #444;
+            padding-top: 1rem;
+            border-top: 2px dashed var(--warden-steel);
         }
 
         .result-item {
@@ -80,61 +101,70 @@
             margin-bottom: 0.8rem;
         }
 
-        .val { color: var(--primary); font-weight: bold; font-family: monospace; font-size: 1.1rem; }
+        .val { color: var(--warden-brass); font-weight: bold; font-size: 1.2rem; }
+
+        .disclaimer {
+            margin-top: 1.5rem;
+            font-size: 0.75rem;
+            color: #888;
+            font-style: italic;
+            line-height: 1.4;
+            text-align: center;
+            border: 1px solid #333;
+            padding: 8px;
+            background: rgba(0,0,0,0.2);
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Vector Calc</h2>
+    <img src="https://foxhole.wiki.gg/images/WardenFlag.png" alt="Warden Logo" class="logo">
+    
+    <h2>AA Flak Plotter</h2>
     
     <div class="input-group">
-        <label>Range (Horizontal)</label>
-        <input type="number" id="range" placeholder="0">
+        <label>Ground Range (m)</label>
+        <input type="number" id="range" placeholder="Target horizontal distance...">
     </div>
 
     <div class="input-group">
-        <label>Elevation (Vertical)</label>
-        <input type="number" id="elevation" placeholder="0">
+        <label>Target Altitude (m)</label>
+        <input type="number" id="elevation" placeholder="Target height...">
     </div>
 
-    <button onclick="calculate()">Calculate Output</button>
+    <button onclick="calculate()">Intercept Solution</button>
 
     <div class="results">
         <div class="result-item">
-            <span>Distance:</span>
-            <span id="dist" class="val">0</span>
+            <span>Effective Distance:</span>
+            <span id="dist" class="val">0.00</span>
         </div>
         <div class="result-item">
-            <span>Pitch:</span>
-            <span id="angle" class="val">0°</span>
+            <span>Gun Pitch:</span>
+            <span id="angle" class="val">0.00°</span>
         </div>
+    </div>
+
+    <div class="disclaimer">
+        ⚠️ <strong>Note:</strong> Calculated gun pitch does not account for windage. Wind velocity and direction will affect flak trajectory; further testing required to accommodate wind variables.
     </div>
 </div>
 
 <script>
     function calculate() {
-        // 1. Get inputs
         const r = parseFloat(document.getElementById('range').value);
         const e = parseFloat(document.getElementById('elevation').value);
 
-        // 2. Validation
         if (isNaN(r) || isNaN(e)) {
-            alert("Please enter valid numbers for both fields.");
+            alert("Input required for intercept coordinates.");
             return;
         }
 
-        // 3. Math Logic
-        // Hypotenuse: sqrt(r² + e²)
         const distance = Math.sqrt(Math.pow(r, 2) + Math.pow(e, 2));
-        
-        // Angle: arctan(e/r) 
-        // Note: Math.atan returns radians, we convert to degrees
-        // Using Math.atan2(y, x) is safer as it handles division by zero better
         const radians = Math.atan2(e, r);
         const degrees = radians * (180 / Math.PI);
 
-        // 4. Update UI (toFixed(2) limits to 2 decimal places)
         document.getElementById('dist').textContent = distance.toFixed(2);
         document.getElementById('angle').textContent = degrees.toFixed(2) + "°";
     }
