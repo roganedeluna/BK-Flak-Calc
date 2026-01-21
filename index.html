@@ -25,6 +25,7 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
+            position: relative;
         }
 
         .container {
@@ -36,6 +37,7 @@
             width: 100%;
             max-width: 400px;
             position: relative;
+            z-index: 1;
         }
 
         .logo {
@@ -114,6 +116,47 @@
             padding: 8px;
             background: rgba(0,0,0,0.2);
         }
+
+        /* Credit Box Styling */
+        .credit-box {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--warden-dark);
+            border: 1px solid var(--warden-steel);
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-radius: 4px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+
+        .credit-text {
+            font-size: 0.7rem;
+            color: var(--warden-brass);
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+
+        .credit-img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border: 1px solid var(--warden-steel);
+        }
+
+        /* Mobile adjustment for credit box */
+        @media (max-width: 600px) {
+            .credit-box {
+                position: static;
+                margin-top: 20px;
+                width: fit-content;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
     </style>
 </head>
 <body>
@@ -149,6 +192,11 @@
     <div class="disclaimer">
         ⚠️ <strong>Note:</strong> Calculated gun pitch does not account for windage. Wind velocity and direction will affect flak trajectory; further testing required to accommodate wind variables.
     </div>
+</div>
+
+<div class="credit-box">
+    <span class="credit-text">Created by:</span>
+    <img src="https://media.discordapp.net/attachments/824896028926148658/1062887204524920992/C4134DA0-18E5-4C08-AA87-1A2DD96EC10E.png?ex=69721499&is=6970c319&hm=cfa9023b05fbe497aa304a3c59c80e04e2759be6088b68ce775ed3a24f0742df&=&format=webp&quality=lossless" alt="Creator Image" class="credit-img">
 </div>
 
 <script>
