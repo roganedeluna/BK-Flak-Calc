@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Range & Elevation Calculator</title>
+    <style>
+        :root {
+            --primary: #00d1b2;
+            --bg: #1a1a1a;
+            --card: #2d2d2d;
+            --text: #eeeeee;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: var(--card);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h2 { text-align: center; color: var(--primary); margin-bottom: 1.5rem; }
+
+        .input-group { margin-bottom: 1.2rem; }
+
+        label { display: block; margin-bottom: 0.5rem; font-size: 0.9rem; color: #bbb; }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #444;
+            border-radius: 6px;
+            background: #1a1a1a;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input:focus { border-color: var(--primary); }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            border: none;
+            border-radius: 6px;
+            color: #1a1a1a;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.1s, opacity 0.2s;
+        }
+
+        button:active { transform: scale(0.98); }
+        button:hover { opacity: 0.9; }
+
+        .results {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #444;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.8rem;
+        }
+
+        .val { color: var(--primary); font-weight: bold; font-family: monospace; font-size: 1.1rem; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Vector Calc</h2>
+    
+    <div class="input-group">
+        <label>Range (Horizontal)</label>
+        <input type="number" id="range" placeholder="0">
+    </div>
+
+    <div class="input-group">
+        <label>Elevation (Vertical)</label>
+        <input type="number" id="elevation" placeholder="0">
+    </div>
+
+    <button onclick="calculate()">Calculate Output</button>
+
+    <div class="results">
+        <div class="result-item">
+            <span>Direct Distance (Hypotenuse):</span>
+            <span id="dist" class="val">0</span>
+        </div>
+        <div class="result-item">
+            <span>Angle (Degrees):</span>
+            <span id="angle" class="val">0°</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    function calculate() {
+        // 1. Get inputs
+        const r = parseFloat(document.getElementById('range').value);
+        const e = parseFloat(document.getElementById('elevation').value);
+
+        // 2. Validation
+        if (isNaN(r) || isNaN(e)) {
+            alert("Please enter valid numbers for both fields.");
+            return;
+        }
+
+        // 3. Math Logic
+        // Hypotenuse: sqrt(r² + e²)
+        const distance = Math.sqrt(Math.pow(r, 2) + Math.pow(e, 2));
+        
+        // Angle: arctan(e/r) 
+        // Note: Math.atan returns radians, we convert to degrees
+        // Using Math.atan2(y, x) is safer as it handles division by zero better
+        const radians = Math.atan2(e, r);
+        const degrees = radians * (180 / Math.PI);
+
+        // 4. Update UI (toFixed(2) limits to 2 decimal places)
+        document.getElementById('dist').textContent = distance.toFixed(2);
+        document.getElementById('angle').textContent = degrees.toFixed(2) + "°";
+    }
+</script>
+
+</body>
+</html>
