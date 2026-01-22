@@ -12,6 +12,8 @@
             --warden-brass: #c5a059;
             --text: #e0e0e0;
             --bg: #12161a;
+            --danger: #ff4d4d;
+            --success: #00ff00;
         }
 
         body {
@@ -91,8 +93,20 @@
 
         button:hover { background: #4a647a; border-color: var(--warden-brass); }
 
+        /* Tactical Status Box */
+        #status-box {
+            margin-top: 1rem;
+            padding: 10px;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: bold;
+            border: 1px solid var(--warden-steel);
+            background: rgba(0,0,0,0.3);
+            display: none; /* Hidden until calculation */
+        }
+
         .results {
-            margin-top: 1.5rem;
+            margin-top: 1rem;
             padding-top: 1rem;
             border-top: 2px dashed var(--warden-steel);
         }
@@ -117,7 +131,6 @@
             background: rgba(0,0,0,0.2);
         }
 
-        /* Credit Box Styling */
         .credit-box {
             position: fixed;
             bottom: 20px;
@@ -147,7 +160,6 @@
             border: 1px solid var(--warden-steel);
         }
 
-        /* Mobile adjustment for credit box */
         @media (max-width: 600px) {
             .credit-box {
                 position: static;
@@ -178,6 +190,8 @@
 
     <button onclick="calculate()">Intercept Solution</button>
 
+    <div id="status-box"></div>
+
     <div class="results">
         <div class="result-item">
             <span>Effective Distance:</span>
@@ -196,13 +210,14 @@
 
 <div class="credit-box">
     <span class="credit-text">Created by:</span>
-    <img src="https://media.discordapp.net/attachments/824896028926148658/1062887204524920992/C4134DA0-18E5-4C08-AA87-1A2DD96EC10E.png?ex=69721499&is=6970c319&hm=cfa9023b05fbe497aa304a3c59c80e04e2759be6088b68ce775ed3a24f0742df&=&format=webp&quality=lossless" alt="Creator Image" class="credit-img">
+    <img src="https://media.discordapp.net/attachments/824896028926148658/1062887204524920992/C4134DA0-18E5-4C08-AA87-1A2DD96EC10E.png?format=webp&quality=lossless" alt="Creator Image" class="credit-img">
 </div>
 
 <script>
     function calculate() {
         const r = parseFloat(document.getElementById('range').value);
         const e = parseFloat(document.getElementById('elevation').value);
+        const statusBox = document.getElementById('status-box');
 
         if (isNaN(r) || isNaN(e)) {
             alert("Input required for intercept coordinates.");
@@ -215,6 +230,25 @@
 
         document.getElementById('dist').textContent = distance.toFixed(2);
         document.getElementById('angle').textContent = degrees.toFixed(2) + "°";
+
+        // Logic for Safety Limits
+        statusBox.style.display = "block";
+        let errors = [];
+
+        if (distance < 150) errors.push("TOO CLOSE (<150m)");
+        if (distance > 500) errors.push("OUT OF RANGE (>500m)");
+        if (degrees < 3) errors.push("PITCH TOO LOW (<3°)");
+        if (degrees > 40) errors.push("PITCH TOO STEEP (>40°)");
+
+        if (errors.length > 0) {
+            statusBox.style.color = "var(--danger)";
+            statusBox.style.borderColor = "var(--danger)";
+            statusBox.textContent = "❌ DEAD ZONE: " + errors.join(" & ");
+        } else {
+            statusBox.style.color = "var(--success)";
+            statusBox.style.borderColor = "var(--success)";
+            statusBox.textContent = "🟢 CLEAR TO ENGAGE";
+        }
     }
 </script>
 
